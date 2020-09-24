@@ -1,0 +1,10 @@
+{
+	"host": "34.93.43.227",
+	"user": "dev",
+	"password":"dev@apsit.edu.IN",
+	"ssl": {
+		"ca": "ssl_certificates/server-ca.pem",
+		"key": "ssl_certificates/client-key.pem",
+		"cert": "ssl_certificates/client-cert.pem"
+	}
+}
