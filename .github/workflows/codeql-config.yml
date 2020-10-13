@@ -1,0 +1,7 @@
+name: "CodeQL"
+
+paths-ignore: 
+  - node_modules
+  - '**/*.test.js'
+  - '**/assets/js/Chart.bundle.js'
+  - '**/assets/plugins/**/*.*'
