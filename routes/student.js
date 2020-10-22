@@ -1,70 +1,58 @@
 const express = require('express');
 const path = require('path');
+
 const passport = require('passport');
-const passportLocal = require('passport-local').Strategy;
-const debug = require('debug')('backend:server:student.js');
+const LocalStratergy = require('passport-local').Strategy;
 
 const router = express.Router();
 
-// Setting Passport for use
-passport.use(new passportLocal({
-    usernameField: 'email',
-    passwordField: 'password'
-  },
-    async function(username, password, _done) {
-        console.log("LINE 20");
-        console.log(username, password);
-        // if(username == "StudentAccount") {
-        //     if(password == "123456") {
-        //         console.log("Success verify");
-        //         return done(null, {"email": username, "password": password, name: "Test Account"});
-        //     } else {
-        //         console.log("Wrong Password")
-        //         return done(null, false);
-        //     }
-        // } else if (username && password) {
-        //     console.log("Wrong username or password")
-        //     return done(null, false);
-        // } else {
-        //     console.log("No USERNAME and PASSWORD");
-        //     return done(new Error("NO Username or Password"));
-        // }
-    }
+router.use(express.static(path.join(__dirname, "..", "public", "student")))
+
+
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password'
+},
+function(username, password, done) {
+  return done(null, {"email": username, "password": password});
+}
 ));
 
-passport.serializeUser(function(user, done) {
-    console.log("LINE 41");
-    console.log(user.email);
-    done(null, JSON.stringify({"email":user.email, "password": user.password}));
+
+router.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "student", "user.html"));
 });
 
-passport.deserializeUser(function(id, done) {
-    const {email: username, password} = JSON.parse(id);
-    console.log("LINE 48");
-    console.log(username, password);
-    if(username == "DishaUser") {
-        if(password == "123456") {
-            console.log("Success verify");
-            return done(null, {"email": username, "password": password, name: "Trial User"});
-        } else {
-            console.log("Wrong Password")
-            return done(null, false);
-        }
-    } else if (username && password) {
-        console.log("Wrong username or password")
-        return done(null, false);
-    } else {
-        console.log("No USERNAME and PASSWORD");
-        return done(new Error("NO Username or Password"));
+router.post("/login",(req,res)=>{
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = {email,password};
+   //not sure about the procedure thats why emply now
+   db.query('SELECT password FROM users WHERE email = ?',[email],function(err,results,fields){
+  
+    if(!(results.length===0))
+    {
+      req.login(user, function(err) {
+        return res.redirect('/user.html');
+      });
     }
+   });
 });
 
+
+passport.serializeUser(function(user, done) {
+  done(null, JSON.stringify({"email":user.email, "password": user.password}));
+});
+
+passport.deserializeUser(function(user, done) {
+  done(err, user);
+});
+  
 router.use(passport.initialize());
 router.use(passport.session());
 
-router.get("/", (_req, res) => {
-    res.sendFile(path.join(__dirname, "..", "public", "student", "user.html"));
-});
 
-router.use(express.static(path.join(__dirname, "..", "public", "student")))
+
 module.exports = router;
