@@ -132,7 +132,7 @@ function append_json(data) {
       '                          <i class="material-icons">delete</i>' +
       "                        </button>";
     // CONSTRUCTION OF ROWS HAVING
-    // DATA FROM JSON OBJECT 
+    // DATA FROM JSON OBJECT
     company += "<tr>";
     company += "<td>" + (key + 1) + "</td>";
     company += "<td>" + value.name + "</td>";
@@ -150,44 +150,40 @@ function editcompany(x) {
   let i = x.parentNode.parentNode.rowIndex;
   // console.log(JSON.stringify(compList));
   document.getElementById("company_name").value = compList[i - 1].name;
-  document.getElementById("company_description").value = compList[i - 1].description;
+  document.getElementById("company_description").value =
+    compList[i - 1].description;
   showmodal();
 }
 
 function deletecompany(x) {
-  if(ConfirmDelete()){
+  if (ConfirmDelete()) {
     let i = x.parentNode.parentNode.rowIndex;
-  let companyid = compList[i - 1].id;
-  let companydata = {
-    id: companyid
-  };
+    let companyid = compList[i - 1].id;
+    let companydata = { id: companyid };
 
-  fetch("/users/admin/disableCompany", {
-    method: "DELETE",
-    body: JSON.stringify(companydata),
-    headers: { "Content-type": "application/json; charset=UTF-8" },
-  })
-    .then((response) =>
-      response.text().then((text) => {
-        console.log(text);
-        if (response.ok) {
-          if (!alert("Successfully Deleted")) {
-            window.location.reload();
+    fetch("/users/admin/disableCompany", {
+      method: "DELETE",
+      body: JSON.stringify(companydata),
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+    })
+      .then((response) =>
+        response.text().then((text) => {
+          console.log(text);
+          if (response.ok) {
+            if (!alert("Successfully Deleted")) {
+              window.location.reload();
+            }
           }
-        }
-        return text;
-      })
-    )
-    .then((json) => console.log(json))
-    .catch((err) => console.log(err));
+          return text;
+        })
+      )
+      .then((json) => console.log(json))
+      .catch((err) => console.log(err));
   }
 }
 
-function ConfirmDelete()
-{
+function ConfirmDelete() {
   var x = confirm("Are you sure you want to delete?");
-  if (x)
-      return true;
-  else
-    return false;
+  if (x) return true;
+  else return false;
 }
