@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 const debug = require('debug')('backend:server:index.js');
@@ -16,6 +17,21 @@ router.all('/test', function (_req, res) {
     debug("into /test");
     res.send("TEST SUCCESS");
 });
+router.get('/verify', (req, res) => {
+    const verificationID = req.query.code;
+    const email = req.query.refs;
+    req.db.query('update user set isVerified = TRUE, verificationCode = NULL where verificationCode = ?;', [verificationID])
+    .then((results) => {
+      if(results[0].changedRows===1) {
+        res.send("<h1>SUCCESSFULLY Verified</h1>")
+      } else {
+        res.send("<h1>INVALID Verification</h1>");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+})
 
 router.use("/assets", express.static(path.join(__dirname, "..", "public", "assets")));
 router.use("/admin", express.static(path.join(__dirname, "..", "public", "admin")))

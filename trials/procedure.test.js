@@ -22,7 +22,7 @@ pool = pool.promise();
 (async () => {
     try {
         // let id, email, temp, isVerified;
-        let reply = await pool.query("CALL Reg(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", ["omkar3654@gmail.com", "sjfbsdhfbsudhfbuhsdb", "omkaragrawal", 1234567890, "sfsdv", "Mumbai", "India", 401107, "sgdvsg", "hsdvghs"]);
+        let reply = await pool.query("CALL Reg(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", ["omkar3654@gmail.com", "sjfbsdhfbsudhfbuhsdb", "omkaragrawal", 1234567890, "sfsdv", "Mumbai", "India", 401107, "sgdvsg", "hsdvghs", "123456789012345678901"]);
         const data = reply[0][0][0];
         console.table([{id: data.id, email: data.email, status: data["@status"], isVerified: data.isVerified}]);
         // SELECT id, email , @status,  isVerified FROM user WHERE email = UEmail;  

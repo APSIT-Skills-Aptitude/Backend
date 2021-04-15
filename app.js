@@ -130,7 +130,7 @@ try {
         },async function (email, givenPassword, done) {
             debug("LINE 20");
             debug(email, givenPassword);
-            return pool.query('Select id, password, name, uType, isActive, isVerified, verificationLink from user where email = ?;', [email])
+            return pool.query('Select id, password, name, uType, isActive, isVerified, verificationCode from user where email = ?;', [email])
                 .then(results => {
                     if (results[0].length > 0) {
                         const {

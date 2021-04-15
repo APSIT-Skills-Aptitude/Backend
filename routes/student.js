@@ -35,7 +35,7 @@ router.get('/fetchQuiz/:id/:quizId', (req, res) => {
         });
     
         // res.send({id, quizId});
-})
+});
 
 router.use(express.static(path.join(__dirname, "..", "public", "student")));
 module.exports = router;

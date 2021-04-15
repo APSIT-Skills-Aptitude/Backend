@@ -1,5 +1,9 @@
 const express = require('express');
 const path = require('path');
+const { nanoid } = require('nanoid');
+const bcrypt = require('bcrypt');
+const { sendVerificationMail } = require('../tools/sendEmails');
+
 const router = express.Router();
 const debug = require('debug')('backend:server:index.js');
 const {
@@ -256,12 +260,13 @@ router.post('/register',
                 errors: results.array()
             });
         } else {
+            const verificationID = nanoid();
             // console.table([{
             //     ...req.body
             // }]);
 
             // debug("Received at /register");
-            req.db.query("CALL Reg(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [req.body.email, req.body.password, req.body.fullname, req.body.mobile, req.body.address, req.body.city, req.body.country, req.body.postcode, req.body.institute_name, req.body.photo])
+            req.db.query("CALL Reg(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [req.body.email, req.body.password, req.body.fullname, req.body.mobile, req.body.address, req.body.city, req.body.country, req.body.postcode, req.body.institute_name, req.body.photo, verificationID])
                 .then((...results) => {
                     const data = results[0][0][0];
                     console.log(...results);
@@ -273,8 +278,16 @@ router.post('/register',
                     }]);
                     // res.json(req.body);
                     // res.redirect("/registrationSuccess")
-                    debug("Response Sent successfully");
-                    res.send("Registration Successful");
+                    // debug("Response Sent successfully");
+                    // res.send("Registration Successful");
+
+                    return sendVerificationMail(req.body.email, verificationID);
+                })
+                .then(results => {
+                    if(results[0].statusCode == 202) {
+                        debug("sent code:  " + verificationID);
+                        res.send("<h1>SUCCESSFULLY REGISTERED Please verify from your mail</h1>");
+                    } else throw results;
                 })
                 .catch((err) => {
                     debug(err);

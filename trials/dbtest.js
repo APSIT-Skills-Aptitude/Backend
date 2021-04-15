@@ -2,7 +2,7 @@ var fs = require('fs');
 var mysql = require('mysql2');
 // // var myconfig = require('./myconfig.json');
 if (!process.env.NODE_ENV || process.env.NODE_ENV !== "production") {
-  const dotenv = require("dotenv").config()
+  const dotenv = require("dotenv").config({path: '../.env'});
 }
 
 // function db_test() {
@@ -179,15 +179,24 @@ function db_listDatabases(con) {
   //     con.end();
   //   });
 
-  con.query('select q.id, q.quiz_id, q.quiz_time from quiz_list q join company c on q.company_id = c.id where q.company_id = ? and c.active = true and q.isActive = true;', [3])
+  // con.query('select q.id, q.quiz_id, q.quiz_time from quiz_list q join company c on q.company_id = c.id where q.company_id = ? and c.active = true and q.isActive = true;', [3])
+  //   .then((results) => {
+  //     // console.log(results[0]);
+  //     if (results[0].length >= 1) {
+  //       console.log(results[0]);
+  //     } else if (results[0].length === 0) {
+  //       console.log("No Quiz");
+  //     } else {
+  //       console.log(results);
+  //     }
+  //     con.end();
+  //   })
+  con.query('update user set isVerified = TRUE, verificationCode = NULL where verificationCode = ?;', ["123456789012345678901"])
     .then((results) => {
-      // console.log(results[0]);
-      if (results[0].length >= 1) {
-        console.log(results[0]);
-      } else if (results[0].length === 0) {
-        console.log("No Quiz");
-      } else {
+      if(results[0].changedRows===1) {
         console.log(results);
+      } else {
+        console.log("Not Affected");
       }
       con.end();
     })
