@@ -1,8 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { nanoid } = require('nanoid');
-const bcrypt = require('bcrypt');
-const { sendVerificationMail } = require('../tools/sendEmails');
+const {
+    nanoid
+} = require('nanoid');
+// const bcrypt = require('bcrypt');
+const {
+    sendVerificationMail
+} = require('../tools/sendEmails');
 
 const router = express.Router();
 const debug = require('debug')('backend:server:index.js');
@@ -58,7 +62,7 @@ router.get("/login", function (req, res, next) {
 });
 
 router.post("/login", (req, res, next) => {
-    if(req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         debug("Is Authenticated");
         res.redirect(301, "/users/student");
         return;
@@ -284,7 +288,7 @@ router.post('/register',
                     return sendVerificationMail(req.body.email, verificationID);
                 })
                 .then(results => {
-                    if(results[0].statusCode == 202) {
+                    if (results[0].statusCode == 202) {
                         debug("sent code:  " + verificationID);
                         res.send("<h1>SUCCESSFULLY REGISTERED Please verify from your mail</h1>");
                     } else throw results;
@@ -340,20 +344,22 @@ router.post("/uploadImage", (req, res) => {
 })
 
 router.get('/companyQuizs', (req, res) => {
-    const { companyId } = req.query;
+    const {
+        companyId
+    } = req.query;
     // res.send(companyId);
     req.db.query('select q.id, q.quiz_id, q.quiz_time from quiz_list q join company c on q.company_id = c.id where q.company_id = ? and c.active = true and q.isActive = true;', [companyId])
-    .then((results) => {
-        if (results[0].length >= 1) {
-          res.send(results[0]);
-        } else if (results[0].length === 0) {
-          res.send("No Quiz");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send(err);
-      });
+        .then((results) => {
+            if (results[0].length >= 1) {
+                res.send(results[0]);
+            } else if (results[0].length === 0) {
+                res.send("No Quiz");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send(err);
+        });
 });
 
 router.use("/images", express.static(path.join(__dirname, "..", "custom-images")));
